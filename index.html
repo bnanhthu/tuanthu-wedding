@@ -509,7 +509,7 @@
   /* ====================================================================
      GOOGLE SHEET — dán link /exec của Apps Script (Web app) vào giữa dấu "".
      ==================================================================== */
-  var WEBAPP_URL = "";
+  var WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzo18ERDePghRfPSMYY02XzBVsuYSYtlgVJZ8fG9G8qRCLsRKQXPJGP4h-OTnVE18OC/exec";
 
   function sheetUrl(d) {
     var q = "name=" + encodeURIComponent(d.name) +
@@ -553,8 +553,21 @@
     };
     lastRecord = d;
 
-    var opened = false;
-    if (WEBAPP_URL) { try { opened = !!window.open(sheetUrl(d), "_blank", "noopener"); } catch (e2) { opened = false; } }
+    // Gửi phản hồi vào Google Sheet qua fetch (không mở tab mới)
+    if (WEBAPP_URL) {
+      try {
+        fetch(WEBAPP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+          body: new URLSearchParams({
+            name: d.name, phone: d.phone, side: d.side,
+            attend: d.attend, guests: d.guests, wish: d.wish, at: d.at
+          }).toString()
+        }).catch(function () {});
+      } catch (e2) {}
+    }
+    var opened = !!WEBAPP_URL;
 
     var btn = document.getElementById("submitBtn");
     btn.disabled = true; btn.textContent = "Đang gửi…";
