@@ -392,6 +392,10 @@
         </div>
         <h3>Cảm ơn bạn thật nhiều!</h3>
         <p id="successMsg">Tụi mình đã nhận được phản hồi của bạn.</p>
+        <div class="summary" id="summary"></div>
+        <div class="actions">
+          <button class="btn btn-outline" id="againBtn" type="button">Gửi phản hồi khác</button>
+        </div>
       </div>
     </section>
 
@@ -518,6 +522,7 @@
   }
 
   function showSuccess(d, saved, opened) {
+    buildSummary(d);
     document.getElementById("successMsg").textContent = "Tụi mình đã nhận được phản hồi của bạn.";
     var intro = document.getElementById("rsvpIntro"); if (intro) intro.hidden = true;
     form.hidden = true; successEl.hidden = false;
@@ -560,6 +565,15 @@
     save(d).then(function (saved) { showSuccess(d, saved, opened); })
            .catch(function () { showSuccess(d, false, opened); })
            .then(function () { btn.disabled = false; btn.textContent = "Gửi xác nhận"; });
+  });
+
+  document.getElementById("againBtn").addEventListener("click", function () {
+    form.reset();
+    Array.prototype.forEach.call(selects, refreshSelect);
+    syncGuests();
+    successEl.hidden = true; form.hidden = false;
+    var intro = document.getElementById("rsvpIntro"); if (intro) intro.hidden = false;
+    form.scrollIntoView({ behavior: "smooth", block: "center" });
   });
 
   /* ---------- Lưu qua db capability ---------- */
